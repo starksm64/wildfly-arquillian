@@ -18,7 +18,8 @@ public class AppClientMethodExecutor implements ContainerMethodExecutor {
     public TestResult invoke(TestMethodExecutor testMethodExecutor) {
         TestResult result = TestResult.passed();
         String[] lines = appClient.readAll(5000);
-        log.info(String.format("AppClient readAll returned %d lines\n", lines.length));
+
+        log.info(String.format("AppClient(%s) readAll returned %d lines\n", testMethodExecutor.getMethodName(), lines.length));
         boolean sawStart = false, sawEnd = false, sawResult = false, sawSuccess = false, sawFailed = false;
         String failedLine = null;
         for (String line : lines) {
@@ -36,7 +37,7 @@ public class AppClientMethodExecutor implements ContainerMethodExecutor {
                 sawResult = true;
             }
         }
-        if(sawFailed) {
+        if (sawFailed) {
             result = TestResult.failed(new Exception(failedLine));
         }
         return result;

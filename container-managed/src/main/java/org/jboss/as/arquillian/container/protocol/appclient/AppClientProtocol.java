@@ -8,7 +8,6 @@ import org.jboss.arquillian.container.test.spi.client.protocol.Protocol;
 import org.jboss.arquillian.container.test.spi.command.CommandCallback;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
-import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.as.arquillian.container.managed.AppClientWrapper;
 
 public class AppClientProtocol implements Protocol<AppClientProtocolConfiguration> {
@@ -31,7 +30,8 @@ public class AppClientProtocol implements Protocol<AppClientProtocolConfiguratio
     }
 
     @Override
-    public ContainerMethodExecutor getExecutor(AppClientProtocolConfiguration protocolConfiguration, ProtocolMetaData metaData, CommandCallback callback) {
+    public ContainerMethodExecutor getExecutor(AppClientProtocolConfiguration protocolConfiguration, ProtocolMetaData metaData,
+            CommandCallback callback) {
         return new AppClientMethodExecutor(appClientWrapper.get());
     }
 }

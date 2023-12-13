@@ -52,7 +52,7 @@ public class AppClientProvider extends AbstractTargetsContainerProvider {
      * {@inheritDoc}
      *
      * @see org.jboss.arquillian.container.test.impl.enricher.resource.OperatesOnDeploymentAwareProvider#doLookup(org.jboss.arquillian.test.api.ArquillianResource,
-     * java.lang.annotation.Annotation[])
+     *          java.lang.annotation.Annotation[])
      */
     @Override
     public Object doLookup(final ArquillianResource resource, final Annotation... qualifiers) {

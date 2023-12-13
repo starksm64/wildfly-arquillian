@@ -284,6 +284,23 @@
                             </systemPropertyVariables>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>appclient-tests-tck</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <skip>false</skip>
+                            <includes>
+                                <include>**/app/AppClientWithTestsMainTestCase.java</include>
+                            </includes>
+                            <systemPropertyVariables>
+                                <arquillian.launch>jboss-client-ee11-tck</arquillian.launch>
+                                <arquillian.xml>appclient-arquillian.xml</arquillian.xml>
+                            </systemPropertyVariables>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
         </plugins>

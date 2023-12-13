@@ -15,8 +15,11 @@
  */
 package org.jboss.as.arquillian.container.app;
 
+import java.io.File;
+
 import jakarta.annotation.Resource;
 import jakarta.ejb.EJB;
+
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.OverProtocol;
 import org.jboss.arquillian.container.test.api.TargetsContainer;
@@ -30,9 +33,8 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.io.File;
-
-/** This version of the app client main includes junit tests that are to be run outside of the test vm
+/**
+ * This version of the app client main includes junit tests that are to be run outside of the test vm
  *
  * To run in an IDE, set the -Darquillian.xml=appclient-arquillian.xml -Darquillian.launch=jboss-client-ee11-tck
  * properties the test VM arguments
@@ -85,22 +87,22 @@ public class AppClientWithTestsMainTestCase {
         }
 
         String testName = null;
-        for(int n = 0; n < params.length; n ++) {
+        for (int n = 0; n < params.length; n++) {
             String p = params[n];
-            if(p.equals("-t")) {
-                testName = params[n+1];
+            if (p.equals("-t")) {
+                testName = params[n + 1];
                 break;
             }
         }
-        if(testName == null) {
+        if (testName == null) {
             throw new IllegalStateException("No test name given, use -t <test-name>");
         }
-        AppClientWithTestsMainTestCase instance  = new AppClientWithTestsMainTestCase();
+        AppClientWithTestsMainTestCase instance = new AppClientWithTestsMainTestCase();
         instance.param = testName;
-        if(testName.equals("testCallEjb")) {
+        if (testName.equals("testCallEjb")) {
             instance.testCallEjb();
-        } else if(testName.equals("testWithException")) {
-                instance.testWithException();
+        } else if (testName.equals("testWithException")) {
+            instance.testWithException();
         }
 
         logger.info("AppClientMain.end");

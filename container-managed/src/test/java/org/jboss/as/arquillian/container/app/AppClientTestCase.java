@@ -36,7 +36,7 @@ import org.junit.runner.RunWith;
  * This version automatically starts the application client container after starting the server and deploying
  * the test EAR.
  *
- * To run in an IDE, set the -Darquillian.xml=appclient-arqullian.xml property the test VM arguments
+ * To run in an IDE, set the -Darquillian.xml=appclient-arquillian.xml property the test VM arguments
  */
 @RunWith(Arquillian.class)
 public class AppClientTestCase {
@@ -78,7 +78,7 @@ public class AppClientTestCase {
     @Test
     @RunAsClient
     public void testAppClientRunViaArq(AppClientWrapper appClient) throws Exception {
-        String[] output = appClient.readAll(1000);
+        String[] output = appClient.readAll(5000);
         System.out.printf("AppClient readAll returned %d lines\n", output.length);
         boolean sawStart = false, sawEnd = false, sawResult = false, sawSuccess = false, sawFailed = false;
         for (String line : output) {

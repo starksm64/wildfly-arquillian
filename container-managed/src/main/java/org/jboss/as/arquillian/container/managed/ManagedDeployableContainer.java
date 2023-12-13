@@ -149,7 +149,10 @@ public final class ManagedDeployableContainer extends CommonManagedDeployableCon
             try {
                 // Launch the client container if the config says to
                 if (getContainerConfiguration().isRunClient()) {
+                    log.info("Calling run on app client");
                     appClient.run();
+                } else {
+                    log.info("NOT calling run on app client");
                 }
             } catch (Exception e) {
                 if (e instanceof LifecycleException)

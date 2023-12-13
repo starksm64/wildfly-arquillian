@@ -112,6 +112,7 @@ public class AppClientWrapper {
      */
     public void run() throws Exception {
         appClientProcess = Runtime.getRuntime().exec(getAppClientCommand());
+        log.info("Created process" + appClientProcess.info());
         outputReader = new BufferedReader(new InputStreamReader(appClientProcess.getInputStream(), StandardCharsets.UTF_8));
         errorReader = new BufferedReader(new InputStreamReader(appClientProcess.getErrorStream(), StandardCharsets.UTF_8));
 
@@ -119,6 +120,7 @@ public class AppClientWrapper {
         readOutputThread.start();
         final Thread readErrorThread = new Thread(this::readClientErr, errThreadHame);
         readErrorThread.start();
+        log.info("Started process reader threads");
     }
 
     private String[] getAppClientCommand() throws Exception {
@@ -172,17 +174,23 @@ public class AppClientWrapper {
      * Loop
      */
     private void readClientProcess(BufferedReader reader, boolean errReader) {
+        log.info("Begin readClientProcess");
+        int count = 0;
         try {
             String line = reader.readLine();
+            //System.out.println("RCP: " + line);
             while (line != null) {
+                count++;
                 if (errReader)
                     errorLineReceived(line);
                 else
                     outputLineReceived(line);
                 line = reader.readLine();
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
+            log.warn("error during read", e);
         }
+        log.info(String.format("Exiting(%s), read %d lines", errReader, count));
     }
 
     private synchronized void outputLineReceived(String line) {
