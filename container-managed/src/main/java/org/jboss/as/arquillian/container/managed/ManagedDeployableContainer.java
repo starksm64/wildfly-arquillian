@@ -29,6 +29,9 @@ import java.util.Collection;
 import java.util.regex.Pattern;
 
 import org.jboss.arquillian.container.spi.client.container.LifecycleException;
+import org.jboss.arquillian.container.spi.context.annotation.ContainerScoped;
+import org.jboss.arquillian.core.api.InstanceProducer;
+import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.as.arquillian.container.CommonManagedDeployableContainer;
 import org.jboss.as.arquillian.container.ParameterUtils;
 import org.jboss.logging.Logger;
@@ -51,6 +54,9 @@ public final class ManagedDeployableContainer extends CommonManagedDeployableCon
     static final String DATA_DIR = "data";
 
     private final Logger log = Logger.getLogger(ManagedDeployableContainer.class);
+    @Inject
+    @ContainerScoped
+    private InstanceProducer<AppClientWrapper> appClientWrapperProducer;
     private AppClientWrapper appClient;
 
     @Override
@@ -139,6 +145,7 @@ public final class ManagedDeployableContainer extends CommonManagedDeployableCon
         ManagedContainerConfiguration config = getContainerConfiguration();
         if (config.getClientAppEar() != null) {
             appClient = new AppClientWrapper(config, log);
+            appClientWrapperProducer.set(appClient);
             try {
                 // Launch the client container if the config says to
                 if (getContainerConfiguration().isRunClient()) {

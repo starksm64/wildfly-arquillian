@@ -15,3 +15,4 @@
 #
 
 org.jboss.as.arquillian.container.managed.ManagedContainerExtension
+org.jboss.as.arquillian.container.protocol.appclient.AppClientProtocolExtension
