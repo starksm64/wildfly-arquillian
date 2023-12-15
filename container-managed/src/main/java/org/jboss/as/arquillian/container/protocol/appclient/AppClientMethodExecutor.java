@@ -35,9 +35,13 @@ public class AppClientMethodExecutor implements ContainerMethodExecutor {
                 sawSuccess = true;
             } else if (line.contains("AppClientMain.RESULT: clientCall(testAppClientRunViaArq)")) {
                 sawResult = true;
+                result.addDescription(line);
             }
         }
-        if (sawFailed) {
+        if (!sawEnd) {
+            Throwable ex = AppMainHelper.exitThrowable();
+            result = TestResult.failed(ex);
+        } else if(sawFailed) {
             result = TestResult.failed(new Exception(failedLine));
         }
         return result;

@@ -111,7 +111,9 @@ public class AppClientWrapper {
      * @throws Exception - on failure
      */
     public void run() throws Exception {
-        appClientProcess = Runtime.getRuntime().exec(getAppClientCommand());
+        String[] cmdLine = getAppClientCommand();
+        String[] envp = {"JAVA_OPTS=-javaagent:/home/starksm/.m2/repository/org/jboss/byteman/byteman/4.0.22/byteman-4.0.22.jar=script:/tmp/scripts/appclient.btm"};
+        appClientProcess = Runtime.getRuntime().exec(cmdLine, envp);
         log.info("Created process" + appClientProcess.info());
         outputReader = new BufferedReader(new InputStreamReader(appClientProcess.getInputStream(), StandardCharsets.UTF_8));
         errorReader = new BufferedReader(new InputStreamReader(appClientProcess.getErrorStream(), StandardCharsets.UTF_8));
@@ -178,7 +180,7 @@ public class AppClientWrapper {
         int count = 0;
         try {
             String line = reader.readLine();
-            //System.out.println("RCP: " + line);
+            // System.out.println("RCP: " + line);
             while (line != null) {
                 count++;
                 if (errReader)
