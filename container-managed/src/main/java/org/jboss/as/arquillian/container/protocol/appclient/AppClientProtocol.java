@@ -32,6 +32,6 @@ public class AppClientProtocol implements Protocol<AppClientProtocolConfiguratio
     @Override
     public ContainerMethodExecutor getExecutor(AppClientProtocolConfiguration protocolConfiguration, ProtocolMetaData metaData,
             CommandCallback callback) {
-        return new AppClientMethodExecutor(appClientWrapper.get());
+        return new AppClientMethodExecutor(appClientWrapper.get(), protocolConfiguration);
     }
 }

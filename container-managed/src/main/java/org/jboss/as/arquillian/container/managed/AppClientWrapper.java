@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -111,8 +112,18 @@ public class AppClientWrapper {
      * @throws Exception - on failure
      */
     public void run() throws Exception {
+        run(null);
+    }
+
+    public void run(String... args) throws Exception {
         String[] cmdLine = getAppClientCommand();
-        String[] envp = {"JAVA_OPTS=-javaagent:/home/starksm/.m2/repository/org/jboss/byteman/byteman/4.0.22/byteman-4.0.22.jar=script:/tmp/scripts/appclient.btm"};
+        if (args != null) {
+            String[] newCmdLine = new String[cmdLine.length + args.length];
+            System.arraycopy(cmdLine, 0, newCmdLine, 0, cmdLine.length);
+            System.arraycopy(args, 0, newCmdLine, cmdLine.length, args.length);
+            cmdLine = newCmdLine;
+        }
+        String[] envp = getAppClientEnv();
         appClientProcess = Runtime.getRuntime().exec(cmdLine, envp);
         log.info("Created process" + appClientProcess.info());
         outputReader = new BufferedReader(new InputStreamReader(appClientProcess.getInputStream(), StandardCharsets.UTF_8));
@@ -151,6 +162,17 @@ public class AppClientWrapper {
         String[] cmdLine = new String[cmd.size()];
         cmd.toArray(cmdLine);
         return cmdLine;
+    }
+
+    private String[] getAppClientEnv() {
+        ArrayList<String> env = new ArrayList<>();
+        for (Map.Entry<String, String> entry : config.getClientEnv().entrySet()) {
+            env.add(String.format("%s=%s", entry.getKey(), entry.getValue()));
+        }
+        log.info("AppClient env: " + env);
+        String[] envp = new String[env.size()];
+        env.toArray(envp);
+        return envp;
     }
 
     private void readClientOut() {

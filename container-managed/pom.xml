@@ -113,12 +113,6 @@
             <artifactId>jakarta.servlet-api</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- -->
-        <dependency>
-            <groupId>org.jboss.byteman</groupId>
-            <artifactId>byteman</artifactId>
-            <version>${version.byteman}</version>
-        </dependency>
     </dependencies>
 
     <build>

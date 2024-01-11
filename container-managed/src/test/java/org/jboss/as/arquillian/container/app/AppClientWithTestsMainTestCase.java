@@ -17,9 +17,6 @@ package org.jboss.as.arquillian.container.app;
 
 import java.io.File;
 
-import jakarta.annotation.Resource;
-import jakarta.ejb.EJB;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.OverProtocol;
 import org.jboss.arquillian.container.test.api.TargetsContainer;
@@ -30,7 +27,6 @@ import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.exporter.ZipExporter;
 import org.jboss.shrinkwrap.api.spec.EnterpriseArchive;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
@@ -40,16 +36,8 @@ import org.junit.runner.RunWith;
  * properties the test VM arguments
  */
 @RunWith(Arquillian.class)
-public class AppClientWithTestsMainTestCase {
+public class AppClientWithTestsMainTestCase extends AppClientWithTestsMain {
     private static final Logger logger = Logger.getLogger("org.jboss.as.test.appclient");
-
-    @Resource(lookup = "java:comp/InAppClientContainer")
-    private static boolean appclient;
-
-    private String param;
-
-    @EJB
-    private static EjbBusiness appClientSingletonRemote;
 
     @TargetsContainer("jboss-client-ee11-tck")
     @OverProtocol("appclient")
@@ -62,8 +50,9 @@ public class AppClientWithTestsMainTestCase {
         ear.addAsModule(ejbJar);
 
         final JavaArchive appClient = ShrinkWrap.create(JavaArchive.class, "client-annotation.jar");
-        appClient.addClasses(AppClientMain.class);
-        appClient.addAsManifestResource(new StringAsset("Main-Class: " + AppClientMain.class.getName() + "\n"), "MANIFEST.MF");
+        appClient.addClasses(AppClientWithTestsMain.class, AnAppException.class);
+        appClient.addAsManifestResource(new StringAsset("Main-Class: " + AppClientWithTestsMain.class.getName() + "\n"),
+                "MANIFEST.MF");
         ear.addAsModule(appClient);
 
         File archiveOnDisk = new File("target" + File.separator + ear.getName());
@@ -78,51 +67,4 @@ public class AppClientWithTestsMainTestCase {
         return ear;
     }
 
-    public static void main(final String[] params) throws Exception {
-        logger.info("AppClientMain.begin");
-
-        if (!appclient) {
-            logger.error("InAppClientContainer was not true, FAILED");
-            throw new RuntimeException("InAppClientContainer was not true");
-        }
-
-        String testName = null;
-        for (int n = 0; n < params.length; n++) {
-            String p = params[n];
-            if (p.equals("-t")) {
-                testName = params[n + 1];
-                break;
-            }
-        }
-        if (testName == null) {
-            throw new IllegalStateException("No test name given, use -t <test-name>");
-        }
-        AppClientWithTestsMainTestCase instance = new AppClientWithTestsMainTestCase();
-        instance.param = testName;
-        if (testName.equals("testCallEjb")) {
-            instance.testCallEjb();
-        } else if (testName.equals("testWithException")) {
-            instance.testWithException();
-        }
-
-        logger.info("AppClientMain.end");
-    }
-
-    @Test
-    @TargetsContainer("jboss-client-ee11-tck")
-    public void testCallEjb() {
-        try {
-            String result = appClientSingletonRemote.clientCall(param);
-            logger.info("AppClientMain.RESULT: " + result);
-            logger.info("AppClientMain.SUCCESS");
-        } catch (Exception e) {
-            logger.error("AppClientMain.FAILED", e);
-        }
-    }
-
-    @Test(expected = AnAppException.class)
-    @TargetsContainer("jboss-client-ee11-tck")
-    public void testWithException() throws AnAppException {
-        throw new AnAppException("testWithException has failed");
-    }
 }

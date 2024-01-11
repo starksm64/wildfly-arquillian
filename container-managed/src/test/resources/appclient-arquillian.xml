@@ -52,7 +52,7 @@
 
     <container qualifier="jboss-client-ee11-tck" default="false">
         <protocol type="appclient">
-
+            <property name="runClient">true</property>
         </protocol>
         <configuration>
             <property name="jbossHome">${jboss.home}</property>
@@ -64,9 +64,9 @@
             <!-- -->
             <property name="clientAppEar">target/appClient.ear</property>
             <property name="clientArchiveName">client-annotation.jar</property>
-            <property name="clientArguments">-p /home/starksm/Dev/Jakarta/wildflytck/jakartaeetck/bin/xml/../../tmp/tstest.jte -t testCallEjb</property>
-            <property name="clientJvmArguments">-javaagent:/home/starksm/.m2/repository/org/jboss/byteman/byteman/4.0.22/byteman-4.0.22.jar=script:/tmp/AppClientMain.btm</property>
-            <property name="runClient">true</property>
+            <property name="clientArguments">-p /home/starksm/Dev/Jakarta/wildflytck/jakartaeetck/bin/xml/../../tmp/tstest.jte</property>
+            <property name="runClient">false</property>
+            <property name="clientEnvString">CLASSPATH=target/applclient/libutil.jar:target/applclient/libcommon.jar:target/appclient/jakartaee-api.jar</property>
         </configuration>
     </container>
 

@@ -15,6 +15,8 @@
  */
 package org.jboss.as.arquillian.container.managed;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
@@ -54,8 +56,9 @@ public class ManagedContainerConfiguration extends DistributionContainerConfigur
     private String appClientSh = "appclient.sh";
     private boolean appClientShSet;
     private boolean runClient = true;
-
-    private Map<String, String> clientEnv = System.getenv();
+    // String form of clientEnv in formmat KEY=VALUE;KEY1=VALUE1...
+    private String clientEnvString;
+    private Map<String, String> clientEnv = Collections.emptyMap();
 
     private String clientArguments;
 
@@ -190,6 +193,15 @@ public class ManagedContainerConfiguration extends DistributionContainerConfigur
         this.clientArchiveName = clientArchiveName;
     }
 
+    public String getClientEnvString() {
+        return clientEnvString;
+    }
+
+    public void setClientEnvString(String clientEnvString) {
+        this.clientEnvString = clientEnvString;
+        parseEnvString(clientEnvString);
+    }
+
     public Map<String, String> getClientEnv() {
         return clientEnv;
     }
@@ -216,7 +228,7 @@ public class ManagedContainerConfiguration extends DistributionContainerConfigur
     }
 
     /**
-     * Get the appClientSh approriate for the current OS unless it was externally set
+     * Get the appClientSh appropriate for the current OS unless it was externally set
      *
      * @return appclient shell script default base on current OS
      */
@@ -254,5 +266,27 @@ public class ManagedContainerConfiguration extends DistributionContainerConfigur
             detectedOS = OSType.Windows;
         }
         return detectedOS;
+    }
+
+    /**
+     * Parse the KEY1=VALUE1;KEY2=VALUE2; pairs taking into account VALUEs may have =. May need to support
+     * escape sequences if ';' can also be used in the VALUE
+     *
+     * @param envString a string to parse
+     * @see #setClientEnvString(String)
+     */
+    private void parseEnvString(String envString) {
+        String[] pairs = envString.split(";");
+        HashMap<String, String> env = new HashMap<>();
+        for (String pair : pairs) {
+            int equals = pair.indexOf('=');
+            if (equals < 0) {
+                throw new IllegalArgumentException(pair + " is not of form KEY=VALUE, no '=' found");
+            }
+            String key = pair.substring(0, equals);
+            String value = pair.substring(equals + 1);
+            env.put(key.trim(), value.trim());
+        }
+        setClientEnv(env);
     }
 }
